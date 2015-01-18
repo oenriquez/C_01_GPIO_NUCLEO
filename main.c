@@ -2,16 +2,18 @@
 void LED_INIT(void);
 void LED_OUTPUT(int val);
 void delay_ms(int delay_time);
+void BUTTON_INIT(void);
+int BUTTON_READ(void);//regresa un entero
 
 int main(){
 	LED_INIT(); 
-	
+	BUTTON_INIT();
 	while(1){
-			LED_OUTPUT(0);
+			LED_OUTPUT(BUTTON_READ());
 			delay_ms(500);
 		
-			LED_OUTPUT(1);
-			delay_ms(500);
+			//LED_OUTPUT(1);
+			//delay_ms(500);
 	}
 }
 void LED_INIT(void){
@@ -36,4 +38,20 @@ void delay_ms(int delay_time){
 		
 	}
   
+}
+void BUTTON_INIT(void){
+	RCC->AHB1ENR|=(1<<2);//habilitando el puerto GPIOC
+	
+	GPIOC->MODER&=~(0x3<<26);//asi limpiamos el registro
+	GPIOC->PUPDR&=~(0x3<<26);//limpiamo
+	GPIOC->PUPDR|=(1<<26);//ponemos  en pull el puerto 	
+	
+
+}
+int BUTTON_READ(void){
+	if ((GPIOC->IDR)&(0x1<<13)){
+			return (1);
+	}
+	return (0);
+		
 }
